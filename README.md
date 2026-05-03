@@ -66,7 +66,13 @@ pip install -r requirements.txt
 
 ### Step 6: Run
 
-**Live Demo:**
+**Web Dashboard (recommended for demo):**
+```bash
+streamlit run app.py
+```
+Opens in your browser at http://localhost:8501
+
+**Live Demo (terminal):**
 ```bash
 python demo.py
 ```
@@ -99,7 +105,8 @@ python analyze_results.py
 │       └── visualization.py      # Plot generation
 ├── data/raw/                     # Place emotions.csv here
 ├── results/figures/              # Generated charts
-├── demo.py                       # Interactive live demo
+├── app.py                        # Web dashboard (Streamlit)
+├── demo.py                       # Interactive terminal demo
 ├── train_kaggle.py               # Full training pipeline
 ├── analyze_results.py            # Cross-validation + analysis
 └── requirements.txt              # Dependencies
