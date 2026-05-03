@@ -1,0 +1,35 @@
+# Virtual environment
+venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Dataset (too large for GitHub - download separately)
+data/raw/emotions.csv
+data/raw/*.dat
+data/raw/*.mat
+data/processed/
+
+# Saved model weights (large files)
+results/models/*.pth
+
+# Paper and presentation (not for GitHub)
+paper/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# Kiro
+.kiro/
