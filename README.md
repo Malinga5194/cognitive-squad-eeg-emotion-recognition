@@ -114,12 +114,12 @@ python analyze_results.py
 
 ## Team
 
-| Name | Student ID |
-|------|-----------|
-| D.S.M. Perera | MS26906294 |
-| E.A.R. Fonseka | MS26904214 |
-| J.A.L. Manduli | MS26917016 |
-| K.M.H. Bandara | MS26917184 |
+| Name | Student ID | Role |
+|------|-----------|------|
+| D.S.M. Perera | MS26906294 | System Architect (CNN-1D, LSTM, Web UI) |
+| E.A.R. Fonseka | MS26904214 | Data Engineer (Pipeline, Features, PCA) |
+| J.A.L. Manduli | MS26917016 | ML Engineer (SVM, RF, KNN) |
+| K.M.H. Bandara | MS26917184 | Testing Engineer (MLP, CV, Evaluation) |
 
 ## Dataset Citation
 
