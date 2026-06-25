@@ -8,6 +8,8 @@ Models trained:
 2. Random Forest (baseline)
 3. MLP Neural Network (PyTorch)
 4. LSTM on feature sequences (PyTorch)
+5. CNN-1D (PyTorch)
+6. Transformer (PyTorch) - State-of-the-art attention-based model
 
 Usage:
     python train_kaggle.py
@@ -348,6 +350,19 @@ def main():
         "LSTM", device, n_epochs=100, lr=1e-3,
     )
     all_results["LSTM"] = lstm_results
+
+    # Transformer (State-of-the-art attention model)
+    from src.models.transformer_model import EEGTransformer
+    transformer = EEGTransformer(
+        n_features=n_features, n_classes=n_classes,
+        d_model=128, n_heads=8, n_layers=4,
+        dim_feedforward=256, dropout=0.3,
+    )
+    transformer_results = train_pytorch_model(
+        transformer, X_train, y_train, X_test, y_test,
+        "Transformer", device, n_epochs=100, lr=5e-4,
+    )
+    all_results["Transformer"] = transformer_results
 
     # ========================================
     # RESULTS SUMMARY
