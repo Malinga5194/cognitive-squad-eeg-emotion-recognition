@@ -118,7 +118,6 @@ python analyze_results.py
 |------|-----------|
 | D.S.M. Perera | MS26906294 |
 | E.A.R. Fonseka | MS26904214 |
-| G.H.G.D.W. Gallage | MS26900322 |
 | J.A.L. Manduli | MS26917016 |
 | K.M.H. Bandara | MS26917184 |
 
