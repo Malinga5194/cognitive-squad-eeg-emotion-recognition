@@ -2,15 +2,16 @@
 
 **Cognitive Squad** | MSc in Information Technology | SLIIT
 
-Comparative analysis of 6 Machine Learning and Deep Learning models for classifying emotional states (Positive, Neutral, Negative) from EEG brainwave signals.
+Comparative analysis of 7 Machine Learning and Deep Learning models for classifying emotional states (Positive, Neutral, Negative) from EEG brainwave signals.
 
 ## Results
 
 | Model | Accuracy | F1 Score |
 |-------|----------|----------|
-| CNN-1D | **98.83%** | 0.9883 |
 | Random Forest | **98.83%** | 0.9883 |
+| Transformer | **98.83%** | 0.9883 |
 | MLP | 98.36% | 0.9836 |
+| CNN-1D | 98.36% | 0.9836 |
 | LSTM | 98.36% | 0.9836 |
 | SVM | 97.66% | 0.9765 |
 | KNN | 93.44% | 0.9335 |
@@ -99,7 +100,8 @@ python analyze_results.py
 │   ├── models/
 │   │   ├── eegnet.py             # EEGNet CNN
 │   │   ├── lstm_model.py         # LSTM model
-│   │   └── cnn_lstm.py           # Hybrid CNN-LSTM
+│   │   ├── cnn_lstm.py           # Hybrid CNN-LSTM
+│   │   └── transformer_model.py  # Transformer (Self-Attention)
 │   └── utils/
 │       ├── trainer.py            # Training engine
 │       └── visualization.py      # Plot generation
