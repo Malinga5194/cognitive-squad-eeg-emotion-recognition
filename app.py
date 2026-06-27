@@ -9,6 +9,7 @@ import numpy as np
 import pandas as pd
 import time
 from pathlib import Path
+from pathlib import Path
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.svm import SVC
@@ -122,7 +123,11 @@ def main():
     st.markdown('<p class="sub-header">Cognitive Squad | MSc in Information Technology | SLIIT</p>', unsafe_allow_html=True)
 
     # Sidebar
-    st.sidebar.image("results/figures/cognitive_squad_logo_v2.png", width=200)
+    logo_path = "results/figures/cognitive_squad_logo_v2.png"
+    if Path(logo_path).exists():
+        st.sidebar.image(logo_path, width=200)
+    else:
+        st.sidebar.markdown("## 🧠 Cognitive Squad")
     st.sidebar.title("Navigation")
     page = st.sidebar.radio("Go to:", [
         "📊 Dashboard",
