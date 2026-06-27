@@ -9,17 +9,35 @@ import numpy as np
 import pandas as pd
 import time
 from pathlib import Path
-from pathlib import Path
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score, f1_score, classification_report, confusion_matrix
+import torch
+import torch.nn as nn
+from torch.utils.data import DataLoader, TensorDataset
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import seaborn as sns
+
+# Deep learning model definitions (same architectures as train_kaggle.py)
+from train_kaggle import EmotionMLP, EmotionCNN1D, EmotionLSTM
+from src.models.transformer_model import EEGTransformer
+
+# Which models are deep-learning (PyTorch) vs classical (scikit-learn)
+DL_MODELS = {"MLP", "CNN-1D", "LSTM", "Transformer"}
+ALL_MODELS = [
+    "SVM (RBF Kernel)",
+    "Random Forest",
+    "KNN (k=7)",
+    "MLP",
+    "CNN-1D",
+    "LSTM",
+    "Transformer",
+]
 
 # Page config
 st.set_page_config(
@@ -73,7 +91,7 @@ def load_data():
 
 
 def train_model(model_name, X_train, y_train):
-    """Train selected model."""
+    """Train a classical scikit-learn model."""
     models = {
         "SVM (RBF Kernel)": SVC(kernel="rbf", C=10.0, gamma="scale", random_state=42),
         "Random Forest": RandomForestClassifier(n_estimators=300, max_depth=30, random_state=42, n_jobs=-1),
@@ -84,6 +102,81 @@ def train_model(model_name, X_train, y_train):
     model.fit(X_train, y_train)
     train_time = time.time() - start
     return model, train_time
+
+
+def build_dl_model(model_name, n_features, n_classes):
+    """Create a fresh PyTorch model instance by name."""
+    if model_name == "MLP":
+        return EmotionMLP(n_features=n_features, n_classes=n_classes)
+    if model_name == "CNN-1D":
+        return EmotionCNN1D(n_features=n_features, n_classes=n_classes)
+    if model_name == "LSTM":
+        return EmotionLSTM(n_features=n_features, n_classes=n_classes)
+    if model_name == "Transformer":
+        return EEGTransformer(
+            n_features=n_features, n_classes=n_classes,
+            d_model=128, n_heads=8, n_layers=4,
+            dim_feedforward=256, dropout=0.3,
+        )
+    raise ValueError(f"Unknown DL model: {model_name}")
+
+
+def train_dl_model(model_name, X_train, y_train, X_test, y_test, n_classes,
+                   n_epochs=30, batch_size=32, progress=None, status=None):
+    """Train a PyTorch model with a live progress bar. Returns (model, train_time)."""
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    lr = 5e-4 if model_name == "Transformer" else 1e-3
+
+    model = build_dl_model(model_name, X_train.shape[1], n_classes).to(device)
+
+    train_ds = TensorDataset(
+        torch.tensor(X_train, dtype=torch.float32),
+        torch.tensor(y_train, dtype=torch.long),
+    )
+    train_loader = DataLoader(train_ds, batch_size=batch_size, shuffle=True)
+
+    criterion = nn.CrossEntropyLoss()
+    optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=1e-4)
+
+    X_test_t = torch.tensor(X_test, dtype=torch.float32).to(device)
+
+    start = time.time()
+    for epoch in range(1, n_epochs + 1):
+        model.train()
+        for bx, by in train_loader:
+            bx, by = bx.to(device), by.to(device)
+            optimizer.zero_grad()
+            loss = criterion(model(bx), by)
+            loss.backward()
+            optimizer.step()
+
+        if progress is not None:
+            progress.progress(epoch / n_epochs)
+        if status is not None:
+            # Quick validation accuracy for live feedback
+            model.eval()
+            with torch.no_grad():
+                val_acc = (model(X_test_t).argmax(1).cpu().numpy() == y_test).mean()
+            status.text(f"Epoch {epoch}/{n_epochs}  |  Val accuracy: {val_acc:.2%}  |  Device: {device.type.upper()}")
+
+    train_time = time.time() - start
+
+    # Wrap so the rest of the app can call .predict() like a sklearn model
+    return _TorchPredictor(model, device), train_time
+
+
+class _TorchPredictor:
+    """Thin wrapper giving a PyTorch model a sklearn-style .predict()."""
+
+    def __init__(self, model, device):
+        self.model = model.eval()
+        self.device = device
+
+    def predict(self, X):
+        X = np.asarray(X, dtype=np.float32)
+        with torch.no_grad():
+            logits = self.model(torch.tensor(X, dtype=torch.float32).to(self.device))
+            return logits.argmax(1).cpu().numpy()
 
 
 def plot_confusion(y_true, y_pred, class_names):
@@ -205,13 +298,31 @@ def show_train(X_train, X_test, y_train, y_test, class_names, feature_names):
     """Train and evaluate models."""
     st.header("Train & Evaluate Models")
 
-    model_name = st.selectbox("Select Model:", [
-        "SVM (RBF Kernel)", "Random Forest", "KNN (k=7)"
-    ])
+    model_name = st.selectbox("Select Model:", ALL_MODELS)
+
+    is_dl = model_name in DL_MODELS
+    n_epochs = 30
+    if is_dl:
+        device_label = "GPU (CUDA)" if torch.cuda.is_available() else "CPU"
+        st.caption(f"Deep learning model (PyTorch) — trains live on {device_label}.")
+        n_epochs = st.slider("Training epochs:", 10, 100, 30, step=10,
+                             help="Fewer epochs = faster demo. More epochs = higher accuracy.")
 
     if st.button("🚀 Train Model", type="primary"):
-        with st.spinner(f"Training {model_name}..."):
-            model, train_time = train_model(model_name, X_train, y_train)
+        n_classes = len(class_names)
+        if is_dl:
+            progress = st.progress(0.0)
+            status = st.empty()
+            with st.spinner(f"Training {model_name} for {n_epochs} epochs..."):
+                model, train_time = train_dl_model(
+                    model_name, X_train, y_train, X_test, y_test, n_classes,
+                    n_epochs=n_epochs, progress=progress, status=status,
+                )
+            progress.empty()
+            status.empty()
+        else:
+            with st.spinner(f"Training {model_name}..."):
+                model, train_time = train_model(model_name, X_train, y_train)
 
         preds = model.predict(X_test)
         acc = accuracy_score(y_test, preds)
