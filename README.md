@@ -78,7 +78,7 @@ Opens in your browser at http://localhost:8501
 python demo.py
 ```
 
-**Train All 6 Models:**
+**Train All 7 Models:**
 ```bash
 python train_kaggle.py
 ```
@@ -118,10 +118,10 @@ python analyze_results.py
 
 | Name | Student ID | Role |
 |------|-----------|------|
-| D.S.M. Perera | MS26906294 | System Architect (CNN-1D, LSTM, Web UI) |
+| D.S.M. Perera | MS26906294 | Team Lead / System Architect (Transformer, CNN-LSTM, LSTM, Web UI) |
 | E.A.R. Fonseka | MS26904214 | Data Engineer (Pipeline, Features, PCA) |
 | J.A.L. Manduli | MS26917016 | ML Engineer (SVM, RF, KNN) |
-| K.M.H. Bandara | MS26917184 | Testing Engineer (MLP, CV, Evaluation) |
+| K.M.H. Bandara | MS26917184 | Testing Engineer (MLP, Cross-Validation, Evaluation) |
 
 ## Dataset Citation
 
