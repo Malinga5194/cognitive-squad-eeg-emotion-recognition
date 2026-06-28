@@ -25,8 +25,8 @@ Comparative analysis of 7 Machine Learning and Deep Learning models for classify
 
 ### Step 1: Clone the Repository
 ```bash
-git clone https://github.com/YOUR_USERNAME/eeg-emotion-recognition.git
-cd eeg-emotion-recognition
+git clone https://github.com/Malinga5194/cognitive-squad-eeg-emotion-recognition.git
+cd cognitive-squad-eeg-emotion-recognition
 ```
 
 ### Step 2: Create Virtual Environment
