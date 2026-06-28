@@ -228,6 +228,8 @@ def main():
         "🔍 Live Prediction",
         "📈 Analysis",
     ])
+    st.sidebar.markdown("---")
+    st.sidebar.caption("© 2026 D.S.M. Perera (MS26906294)\nCognitive Squad | MSc in IT | SLIIT")
 
     # Load data
     X_train, X_test, y_train, y_test, class_names, scaler, le = load_data()

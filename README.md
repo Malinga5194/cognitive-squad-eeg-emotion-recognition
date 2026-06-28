@@ -126,3 +126,30 @@ python analyze_results.py
 ## Dataset Citation
 
 Bird, J.J., et al. (2019). "Mental Emotional Sentiment Classification with an EEG-based Brain-machine Interface." DISP'19, Springer.
+
+## System Specifications (Development & Testing Environment)
+
+This system was developed, trained, and tested on the following machine:
+
+| Component | Specification |
+|-----------|---------------|
+| Operating System | Windows 11 Pro (64-bit, build 26200) |
+| Processor (CPU) | AMD Ryzen 5 5600X (6 cores / 12 threads) |
+| Memory (RAM) | 32 GB |
+| Graphics (GPU) | NVIDIA GeForce RTX 3060, 12 GB VRAM |
+| GPU Driver | 595.71 |
+| Python | 3.12.10 |
+| PyTorch | 2.11.0 (CUDA 12.6 build) |
+| CUDA Toolkit | 12.6 |
+
+> Note: A CUDA-capable GPU is optional. All models also run on CPU, though
+> deep learning training (Transformer, CNN-1D, LSTM, MLP) is faster on the GPU.
+
+## Copyright
+
+Copyright (c) 2026 D.S.M. Perera (MS26906294), Cognitive Squad.
+MSc in Information Technology, Sri Lanka Institute of Information Technology (SLIIT).
+
+This project was developed for academic purposes as part of the Artificial
+Intelligence module group project. All rights reserved by the author and team.
+
